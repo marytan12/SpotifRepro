@@ -95,7 +95,7 @@
             left: 0;
             right: 0;
             z-index: 10;
-            padding: 40px 24px 32px;
+            padding: 40px 24px 48px;
             background: linear-gradient(to bottom,
                     rgba(0, 0, 0, 0) 0%,
                     rgba(0, 0, 0, 0.005) 5%,
@@ -108,6 +108,12 @@
             -webkit-backdrop-filter: blur(3px);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30px, black 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 30px, black 100%);
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 30px 20px 60px;
+            }
         }
 
         /* Song Info */
@@ -352,6 +358,211 @@
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Lyrics styles */
+        .lyric-line {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .lyric-line.active {
+            background: rgba(29, 185, 84, 0.2);
+            color: #ffffff;
+            font-weight: 600;
+            border-left: 3px solid #1db954;
+        }
+
+        .lyric-line:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .no-lyrics {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* History item styles */
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .history-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-artist {
+            font-size: 12px;
+            color: #b3b3b3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-time {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Menu button on top controls */
+        .menu-button {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Simple menu dropdown */
+        .simple-menu {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.98);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            min-width: 200px;
+            z-index: 100;
+        }
+
+        .simple-menu.show {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
     <script src="spotify-config.js"></script>
@@ -379,13 +590,39 @@
 
         <!-- Top Right Controls -->
         <div class="top-controls">
-            <button class="action-btn">
-                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <button class="menu-button" id="menu-button">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                     <circle cx="12" cy="12" r="2" />
                     <circle cx="12" cy="5" r="2" />
                     <circle cx="12" cy="19" r="2" />
                 </svg>
             </button>
+
+            <!-- Simple dropdown menu -->
+            <div class="simple-menu" id="simple-menu">
+                <div class="menu-item" id="show-lyrics">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                    </svg>
+                    <span>Ver Letras</span>
+                </div>
+                <div class="menu-item" id="show-history">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+                    </svg>
+                    <span>Historial</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Cerrar Sesión</span>
+                </div>
+            </div>
         </div>
 
         <!-- Content Wrapper with gradient -->
@@ -465,6 +702,46 @@
             <h2>No hay música reproduciéndose</h2>
             <p>Abre Spotify y comienza a reproducir algo</p>
             <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </div>
+
+    <!-- Lyrics Modal -->
+    <div class="modal" id="lyrics-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Letras</h2>
+                <button class="close-btn" onclick="closeLyricsModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="lyrics-content">
+                <div class="no-lyrics">
+                    <p>Cargando letras...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Historial</h2>
+                <button class="close-btn" onclick="closeHistoryModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="history-content">
+                <div class="no-lyrics">
+                    <p>Cargando historial...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -726,6 +1003,253 @@
             await spotifyPlayer.seek(positionMs);
             setTimeout(updateNowPlaying, 100);
         });
+
+        // --- MENU INTERACTIONS ---
+        const menuButton = document.getElementById('menu-button');
+        const simpleMenu = document.getElementById('simple-menu');
+        const showLyricsBtn = document.getElementById('show-lyrics');
+        const showHistoryBtn = document.getElementById('show-history');
+        const lyricsModal = document.getElementById('lyrics-modal');
+        const historyModal = document.getElementById('history-modal');
+
+        // Toggle menu
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            simpleMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!simpleMenu.contains(e.target) && e.target !== menuButton) {
+                simpleMenu.classList.remove('show');
+            }
+        });
+
+        // Show lyrics modal
+        showLyricsBtn.addEventListener('click', () => {
+            simpleMenu.classList.remove('show');
+            if (currentTrack) {
+                showLyricsModal();
+            }
+        });
+
+        // Show history modal
+        showHistoryBtn.addEventListener('click', () => {
+            simpleMenu.classList.remove('show');
+            showHistoryModal();
+        });
+
+        // --- LYRICS FUNCTIONALITY ---
+        let currentLyrics = null;
+        let lyricsUpdateInterval = null;
+
+        async function showLyricsModal() {
+            lyricsModal.classList.add('show');
+            if (currentTrack) {
+                await fetchLyrics(currentTrack.id, currentTrack.name);
+            }
+
+            // Start syncing lyrics
+            if (lyricsUpdateInterval) clearInterval(lyricsUpdateInterval);
+            lyricsUpdateInterval = setInterval(syncLyrics, 500);
+        }
+
+        function closeLyricsModal() {
+            lyricsModal.classList.remove('show');
+            if (lyricsUpdateInterval) {
+                clearInterval(lyricsUpdateInterval);
+                lyricsUpdateInterval = null;
+            }
+        }
+
+        async function fetchLyrics(trackId, trackName) {
+            const lyricsContent = document.getElementById('lyrics-content');
+            lyricsContent.innerHTML = '<div class="no-lyrics"><p>Cargando letras...</p></div>';
+
+            try {
+                // Using lrclib.net API for lyrics
+                const artist = currentTrack.artists[0].name;
+                const response = await fetch(`https://lrclib.net/api/search?track_name=${encodeURIComponent(trackName)}&artist_name=${encodeURIComponent(artist)}`);
+                const data = await response.json();
+
+                if (data && data.length > 0 && data[0].syncedLyrics) {
+                    const lyrics = parseLRC(data[0].syncedLyrics);
+                    currentLyrics = lyrics;
+                    displayLyrics(lyrics);
+                } else {
+                    lyricsContent.innerHTML = '<div class="no-lyrics"><p>No hay letras disponibles para esta canción</p></div>';
+                    currentLyrics = null;
+                }
+            } catch (error) {
+                console.error('Error fetching lyrics:', error);
+                lyricsContent.innerHTML = '<div class="no-lyrics"><p>Error al cargar las letras</p></div>';
+                currentLyrics = null;
+            }
+        }
+
+        function parseLRC(lrc) {
+            const lines = lrc.split('\n');
+            const lyrics = [];
+            const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+
+            for (const line of lines) {
+                const match = line.match(timeRegex);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseInt(match[2]);
+                    const hundredths = parseInt(match[3].padEnd(3, '0'));
+                    const timeMs = (minutes * 60 + seconds) * 1000 + hundredths;
+                    const text = line.replace(timeRegex, '').trim();
+
+                    if (text) {
+                        lyrics.push({ time: timeMs, text });
+                    }
+                }
+            }
+
+            return lyrics.sort((a, b) => a.time - b.time);
+        }
+
+        function displayLyrics(lyrics) {
+            const lyricsContent = document.getElementById('lyrics-content');
+            lyricsContent.innerHTML = lyrics.map((line, index) =>
+                `<div class="lyric-line" data-index="${index}" data-time="${line.time}">
+                    ${line.text}
+                </div>`
+            ).join('');
+
+            // Add click listeners for seeking
+            document.querySelectorAll('.lyric-line').forEach(el => {
+                el.addEventListener('click', async () => {
+                    const time = parseInt(el.dataset.time);
+                    await spotifyPlayer.seek(time);
+                    setTimeout(updateNowPlaying, 100);
+                });
+            });
+        }
+
+        function syncLyrics() {
+            if (!currentLyrics || !currentTrack) return;
+
+            const playbackState = spotifyPlayer.getPlaybackState();
+
+            // Get current progress from the progress bar
+            const currentProgress = parseFloat(progressFill.style.width) / 100;
+            const currentMs = currentTrack.duration_ms * currentProgress;
+
+            let activeIndex = -1;
+            for (let i = 0; i < currentLyrics.length; i++) {
+                if (currentLyrics[i].time <= currentMs &&
+                    (i === currentLyrics.length - 1 || currentLyrics[i + 1].time > currentMs)) {
+                    activeIndex = i;
+                    break;
+                }
+            }
+
+            // Update active line
+            document.querySelectorAll('.lyric-line').forEach((el, index) => {
+                if (index === activeIndex) {
+                    el.classList.add('active');
+                    // Scroll into view
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        // --- HISTORY FUNCTIONALITY ---
+        async function showHistoryModal() {
+            historyModal.classList.add('show');
+            await fetchHistory();
+        }
+
+        function closeHistoryModal() {
+            historyModal.classList.remove('show');
+        }
+
+        async function fetchHistory() {
+            const historyContent = document.getElementById('history-content');
+            historyContent.innerHTML = '<div class="no-lyrics"><p>Cargando historial...</p></div>';
+
+            try {
+                const token = await spotifyPlayer.getValidToken();
+                const response = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=20', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.items && data.items.length > 0) {
+                    displayHistory(data.items);
+                } else {
+                    historyContent.innerHTML = '<div class="no-lyrics"><p>No hay historial disponible</p></div>';
+                }
+            } catch (error) {
+                console.error('Error fetching history:', error);
+                historyContent.innerHTML = '<div class="no-lyrics"><p>Error al cargar el historial</p></div>';
+            }
+        }
+
+        function displayHistory(items) {
+            const historyContent = document.getElementById('history-content');
+
+            historyContent.innerHTML = items.map(item => {
+                const track = item.track;
+                const playedAt = new Date(item.played_at);
+                const timeAgo = getTimeAgo(playedAt);
+
+                return `
+                    <div class="history-item" data-uri="${track.uri}">
+                        <img src="${track.album.images[2]?.url || track.album.images[0]?.url}" alt="${track.name}">
+                        <div class="history-item-info">
+                            <div class="history-item-title">${track.name}</div>
+                            <div class="history-item-artist">${track.artists.map(a => a.name).join(', ')}</div>
+                        </div>
+                        <div class="history-item-time">${timeAgo}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click listeners to play tracks
+            document.querySelectorAll('.history-item').forEach(el => {
+                el.addEventListener('click', async () => {
+                    const uri = el.dataset.uri;
+                    await playTrack(uri);
+                    closeHistoryModal();
+                });
+            });
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return 'Ahora';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+            return `${Math.floor(seconds / 86400)}d`;
+        }
+
+        async function playTrack(uri) {
+            try {
+                const token = await spotifyPlayer.getValidToken();
+                await fetch('https://api.spotify.com/v1/me/player/play', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        uris: [uri]
+                    })
+                });
+                setTimeout(updateNowPlaying, 500);
+            } catch (error) {
+                console.error('Error playing track:', error);
+            }
+        }
 
         // Initialize
         startPlayer();
