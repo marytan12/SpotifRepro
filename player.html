@@ -38,11 +38,11 @@
         /* Playlist Title */
         .playlist-title {
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: #b3b3b3;
             padding: 20px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             position: absolute;
             top: 0;
             left: 0;
@@ -80,13 +80,13 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 60%;
+            height: 50%;
             background: linear-gradient(to bottom,
                     rgba(0, 0, 0, 0) 0%,
-                    rgba(0, 0, 0, 0.03) 20%,
-                    rgba(0, 0, 0, 0.08) 40%,
-                    rgba(0, 0, 0, 0.2) 70%,
-                    rgba(0, 0, 0, 0.4) 100%);
+                    rgba(0, 0, 0, 0.01) 30%,
+                    rgba(0, 0, 0, 0.05) 60%,
+                    rgba(0, 0, 0, 0.15) 85%,
+                    rgba(0, 0, 0, 0.25) 100%);
             z-index: 1;
         }
 
@@ -112,24 +112,24 @@
             left: 0;
             right: 0;
             z-index: 10;
-            padding: 0 20px 30px;
+            padding: 0 24px 32px;
             background: linear-gradient(to bottom,
                     rgba(0, 0, 0, 0) 0%,
-                    rgba(0, 0, 0, 0.01) 8%,
-                    rgba(0, 0, 0, 0.03) 20%,
-                    rgba(0, 0, 0, 0.08) 35%,
-                    rgba(0, 0, 0, 0.15) 50%,
-                    rgba(0, 0, 0, 0.3) 75%,
-                    rgba(0, 0, 0, 0.45) 100%);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15px, black calc(100% - 15px), transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0%, black 15px, black calc(100% - 15px), transparent 100%);
+                    rgba(0, 0, 0, 0.005) 5%,
+                    rgba(0, 0, 0, 0.015) 15%,
+                    rgba(0, 0, 0, 0.04) 30%,
+                    rgba(0, 0, 0, 0.08) 50%,
+                    rgba(0, 0, 0, 0.15) 75%,
+                    rgba(0, 0, 0, 0.25) 100%);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
         }
 
         /* Song Info */
         .song-info {
-            margin-bottom: 30px;
+            margin-bottom: 32px;
             position: relative;
             z-index: 3;
             display: flex;
@@ -142,14 +142,14 @@
         }
 
         .song-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
         }
 
         .artist-name {
-            font-size: 16px;
+            font-size: 15px;
             color: #b3b3b3;
             font-weight: 500;
         }
@@ -186,13 +186,13 @@
 
         /* Progress Bar */
         .progress-container {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background: #4d4d4d;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.25);
             border-radius: 2px;
             position: relative;
             margin-bottom: 8px;
@@ -239,8 +239,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 18px;
+            margin-bottom: 28px;
         }
 
         .control-btn {
@@ -267,16 +267,16 @@
         }
 
         .control-btn.play {
-            width: 64px;
-            height: 64px;
+            width: 68px;
+            height: 68px;
             background: #ffffff;
             border-radius: 50%;
             color: #000000;
         }
 
         .control-btn.play:hover {
-            transform: scale(1.05);
-            background: #f5f5f5;
+            transform: scale(1.06);
+            background: #f0f0f0;
         }
 
         /* Bottom Actions */
@@ -295,8 +295,8 @@
         }
 
         .icon-lg {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
         }
 
         .icon-xl {
@@ -698,10 +698,10 @@
 
             const gradient = `linear-gradient(to bottom,
                 transparent 0%,
-                transparent 70%,
-                rgba(${r}, ${g}, ${b}, 0.6) 75%,
-                rgba(${r * 0.8}, ${g * 0.8}, ${b * 0.8}, 0.85) 85%,
-                rgba(${r * 0.5}, ${g * 0.5}, ${b * 0.5}, 0.95) 95%,
+                transparent 75%,
+                rgba(${r}, ${g}, ${b}, 0.15) 85%,
+                rgba(${r * 0.7}, ${g * 0.7}, ${b * 0.7}, 0.3) 92%,
+                rgba(${r * 0.4}, ${g * 0.4}, ${b * 0.4}, 0.5) 97%,
                 rgba(0, 0, 0, 1) 100%)`;
 
             colorBackground.style.background = gradient;
