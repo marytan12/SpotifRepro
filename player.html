@@ -77,17 +77,17 @@
         /* Apple Music style cover (when no canvas) */
         .album-container.apple-music-mode {
             height: auto;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 80px;
+            transform: none;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 0 40px;
         }
 
         .album-container.apple-music-mode .album-art {
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             height: auto;
             aspect-ratio: 1;
         }
@@ -339,11 +339,6 @@
             height: 100vh;
             z-index: 0;
             transition: background 0.8s ease;
-        }
-
-        /* Apple Music gradient background */
-        .color-background.apple-music-gradient {
-            background: linear-gradient(180deg, var(--bg-color-light) 0%, var(--bg-color-dark) 100%);
         }
 
         /* Loading/Error states */
@@ -902,7 +897,6 @@
                 canvasVideo.style.display = 'block';
                 coverImage.style.display = 'none';
                 albumContainer.classList.remove('apple-music-mode');
-                colorBackground.classList.remove('apple-music-gradient');
                 canvasVideo.play().catch(e => console.warn('Canvas video play failed:', e));
             } else {
                 // Apple Music mode - Centered cover with Color Thief background
@@ -910,7 +904,6 @@
                 canvasVideo.src = '';
                 coverImage.style.display = 'block';
                 albumContainer.classList.add('apple-music-mode');
-                colorBackground.classList.add('apple-music-gradient');
 
                 // Use Color Thief for background when in Apple Music mode
                 if (coverImage.complete && coverImage.naturalWidth) {
@@ -1024,29 +1017,17 @@
             try {
                 const colorThief = new ColorThief();
                 const dominantColor = colorThief.getColor(coverImage);
-
-                // Create lighter and darker versions
                 const [r, g, b] = dominantColor;
 
-                // Lighten for top (multiply by 1.3, cap at 255)
-                const rLight = Math.min(255, Math.floor(r * 1.3));
-                const gLight = Math.min(255, Math.floor(g * 1.3));
-                const bLight = Math.min(255, Math.floor(b * 1.3));
+                // Create 3 tones for smooth gradient
+                const top = `rgb(${Math.min(255, Math.floor(r * 1.15))}, ${Math.min(255, Math.floor(g * 1.15))}, ${Math.min(255, Math.floor(b * 1.15))})`;
+                const mid = `rgb(${r}, ${g}, ${b})`;
+                const bottom = `rgb(${Math.floor(r * 0.75)}, ${Math.floor(g * 0.75)}, ${Math.floor(b * 0.75)})`;
 
-                // Darken for bottom (multiply by 0.6)
-                const rDark = Math.floor(r * 0.6);
-                const gDark = Math.floor(g * 0.6);
-                const bDark = Math.floor(b * 0.6);
-
-                // Set CSS variables for the gradient
-                document.documentElement.style.setProperty('--bg-color-light', `rgb(${rLight}, ${gLight}, ${bLight})`);
-                document.documentElement.style.setProperty('--bg-color-dark', `rgb(${rDark}, ${gDark}, ${bDark})`);
-
+                colorBackground.style.background = `linear-gradient(180deg, ${top} 0%, ${mid} 50%, ${bottom} 100%)`;
             } catch (error) {
                 console.warn('Color Thief error:', error);
-                // Fallback to a default gradient
-                document.documentElement.style.setProperty('--bg-color-light', 'rgb(100, 100, 120)');
-                document.documentElement.style.setProperty('--bg-color-dark', 'rgb(40, 40, 50)');
+                colorBackground.style.background = 'linear-gradient(180deg, rgb(100, 100, 120) 0%, rgb(70, 70, 90) 50%, rgb(40, 40, 50) 100%)';
             }
         }
 
