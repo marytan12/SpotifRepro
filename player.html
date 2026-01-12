@@ -71,6 +71,30 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Apple Music style cover (when no canvas) */
+        .album-container.apple-music-mode {
+            height: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+        }
+
+        .album-container.apple-music-mode .album-art {
+            width: 100%;
+            max-width: 340px;
+            height: auto;
+            aspect-ratio: 1;
+        }
+
+        .album-container.apple-music-mode .album-art img {
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
 
         /* Top right controls on album */
@@ -314,7 +338,12 @@
             right: 0;
             height: 100vh;
             z-index: 0;
-            transition: background 0.5s ease;
+            transition: background 0.8s ease;
+        }
+
+        /* Apple Music gradient background */
+        .color-background.apple-music-gradient {
+            background: linear-gradient(180deg, var(--bg-color-light) 0%, var(--bg-color-dark) 100%);
         }
 
         /* Loading/Error states */
@@ -865,17 +894,28 @@
         }
 
         function updateCanvasVisuals(mode) {
+            const albumContainer = document.querySelector('.album-container');
+
             if (mode === 'video' && state.currentCanvasUrl) {
-                // Show canvas video, hide cover image
+                // Show canvas video, hide cover image - Full screen mode
                 canvasVideo.src = state.currentCanvasUrl;
                 canvasVideo.style.display = 'block';
                 coverImage.style.display = 'none';
+                albumContainer.classList.remove('apple-music-mode');
+                colorBackground.classList.remove('apple-music-gradient');
                 canvasVideo.play().catch(e => console.warn('Canvas video play failed:', e));
             } else {
-                // Show cover image, hide canvas video
+                // Apple Music mode - Centered cover with Color Thief background
                 canvasVideo.style.display = 'none';
                 canvasVideo.src = '';
                 coverImage.style.display = 'block';
+                albumContainer.classList.add('apple-music-mode');
+                colorBackground.classList.add('apple-music-gradient');
+
+                // Use Color Thief for background when in Apple Music mode
+                if (coverImage.complete && coverImage.naturalWidth) {
+                    setAppleMusicBackground();
+                }
             }
         }
 
@@ -889,8 +929,18 @@
             coverImage.src = albumArt;
             coverImage.crossOrigin = 'anonymous';
 
-            // Update color background when image loads
-            coverImage.onload = setDynamicBackground;
+            // Update backgrounds when image loads
+            coverImage.onload = () => {
+                const albumContainer = document.querySelector('.album-container');
+
+                // If in Apple Music mode (no canvas), use Color Thief
+                if (albumContainer.classList.contains('apple-music-mode')) {
+                    setAppleMusicBackground();
+                } else {
+                    // Otherwise use the gradient from bottom edge
+                    setDynamicBackground();
+                }
+            };
 
             // Fetch canvas for this track
             if (track.id) {
@@ -965,6 +1015,39 @@
                 rgba(0, 0, 0, 1) 100%)`;
 
             colorBackground.style.background = gradient;
+        }
+
+        // Set Apple Music style background using Color Thief
+        function setAppleMusicBackground() {
+            if (!coverImage.complete || !coverImage.naturalWidth) return;
+
+            try {
+                const colorThief = new ColorThief();
+                const dominantColor = colorThief.getColor(coverImage);
+
+                // Create lighter and darker versions
+                const [r, g, b] = dominantColor;
+
+                // Lighten for top (multiply by 1.3, cap at 255)
+                const rLight = Math.min(255, Math.floor(r * 1.3));
+                const gLight = Math.min(255, Math.floor(g * 1.3));
+                const bLight = Math.min(255, Math.floor(b * 1.3));
+
+                // Darken for bottom (multiply by 0.6)
+                const rDark = Math.floor(r * 0.6);
+                const gDark = Math.floor(g * 0.6);
+                const bDark = Math.floor(b * 0.6);
+
+                // Set CSS variables for the gradient
+                document.documentElement.style.setProperty('--bg-color-light', `rgb(${rLight}, ${gLight}, ${bLight})`);
+                document.documentElement.style.setProperty('--bg-color-dark', `rgb(${rDark}, ${gDark}, ${bDark})`);
+
+            } catch (error) {
+                console.warn('Color Thief error:', error);
+                // Fallback to a default gradient
+                document.documentElement.style.setProperty('--bg-color-light', 'rgb(100, 100, 120)');
+                document.documentElement.style.setProperty('--bg-color-dark', 'rgb(40, 40, 50)');
+            }
         }
 
         // Playback controls event listeners
