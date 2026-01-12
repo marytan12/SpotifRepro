@@ -2,7 +2,7 @@
 const SPOTIFY_CONFIG = {
     clientId: '56005d24a56a4c32bf0c13384a944802',
     clientSecret: '893e2261d39c49f79f6cd2091f146645',
-    redirectUri: window.location.origin + '/spotify-player.html',
+    redirectUri: 'https://spotifrepro.netlify.app/',
     scopes: [
         'user-read-currently-playing',
         'user-read-playback-state',
@@ -56,7 +56,7 @@ class SpotifyPlayer {
             localStorage.setItem('spotify_access_token', data.access_token);
             localStorage.setItem('spotify_refresh_token', data.refresh_token);
             localStorage.setItem('spotify_token_expiry', Date.now() + (data.expires_in * 1000));
-            
+
             return data.access_token;
         } catch (error) {
             console.error('Error getting access token:', error);
@@ -91,7 +91,7 @@ class SpotifyPlayer {
             this.accessToken = data.access_token;
             localStorage.setItem('spotify_access_token', data.access_token);
             localStorage.setItem('spotify_token_expiry', Date.now() + (data.expires_in * 1000));
-            
+
             return data.access_token;
         } catch (error) {
             console.error('Error refreshing token:', error);
@@ -108,7 +108,7 @@ class SpotifyPlayer {
     // Get current token
     async getValidToken() {
         const storedToken = localStorage.getItem('spotify_access_token');
-        
+
         if (storedToken && this.isTokenValid()) {
             this.accessToken = storedToken;
             return storedToken;
