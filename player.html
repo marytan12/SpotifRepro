@@ -377,6 +377,10 @@
             <div class="album-art">
                 <img id="cover-image" src="cover.png" alt="Album Cover"
                     style="width: 100%; height: 100%; object-fit: cover;" crossorigin="anonymous">
+                <video id="canvas-video"
+                    style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none;"
+                    loop muted autoplay playsinline crossorigin="anonymous">
+                </video>
             </div>
         </div>
 
@@ -510,8 +514,16 @@
         let currentTrack = null;
         let updateInterval = null;
 
+        // Canvas state
+        const state = {
+            currentCanvasUrl: null,
+            lastCanvasTrackId: null,
+            preferredCanvasMode: 'video' // 'video' to show canvas when available
+        };
+
         // DOM Elements
         const coverImage = document.getElementById('cover-image');
+        const canvasVideo = document.getElementById('canvas-video');
         const colorBackground = document.querySelector('.color-background');
         const songTitle = document.querySelector('.song-title');
         const artistName = document.querySelector('.artist-name');
@@ -583,6 +595,52 @@
             }
         }
 
+        // --- CANVAS LOGIC (IMPROVED for robustness) ---
+        async function fetchSpotifyCanvas(trackId) {
+            // Logic to clear old canvas before fetching new one
+            if (state.lastCanvasTrackId !== trackId) {
+                state.currentCanvasUrl = null;
+                state.lastCanvasTrackId = trackId;
+                // Important: force update to clear previous video immediately
+                updateCanvasVisuals(state.preferredCanvasMode);
+            }
+
+            if (!trackId) return;
+
+            try {
+                const r = await fetch(`https://spoticanvasapi-three.vercel.app/api/canvas?trackId=${trackId}`);
+                const d = await r.json();
+                if (d?.canvasesList?.[0]?.canvasUrl) {
+                    state.currentCanvasUrl = d.canvasesList[0].canvasUrl;
+                    // Force update again with valid URL
+                    updateCanvasVisuals(state.preferredCanvasMode);
+                } else {
+                    // Explicitly handle "no canvas found" to revert to cover
+                    state.currentCanvasUrl = null;
+                    updateCanvasVisuals(state.preferredCanvasMode);
+                }
+            } catch (e) {
+                console.warn("Canvas API failed or no canvas found", e);
+                state.currentCanvasUrl = null;
+                updateCanvasVisuals(state.preferredCanvasMode);
+            }
+        }
+
+        function updateCanvasVisuals(mode) {
+            if (mode === 'video' && state.currentCanvasUrl) {
+                // Show canvas video, hide cover image
+                canvasVideo.src = state.currentCanvasUrl;
+                canvasVideo.style.display = 'block';
+                coverImage.style.display = 'none';
+                canvasVideo.play().catch(e => console.warn('Canvas video play failed:', e));
+            } else {
+                // Show cover image, hide canvas video
+                canvasVideo.style.display = 'none';
+                canvasVideo.src = '';
+                coverImage.style.display = 'block';
+            }
+        }
+
         // Update track information
         function updateTrackInfo(track) {
             songTitle.textContent = track.name;
@@ -595,6 +653,11 @@
 
             // Update color background when image loads
             coverImage.onload = setDynamicBackground;
+
+            // Fetch canvas for this track
+            if (track.id) {
+                fetchSpotifyCanvas(track.id);
+            }
         }
 
         // Update progress bar
