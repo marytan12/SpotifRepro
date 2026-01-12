@@ -361,6 +361,7 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <script src="spotify-config.js"></script>
 </head>
 
 <body>
@@ -369,7 +370,15 @@
         <div class="color-background"></div>
 
         <!-- Playlist Title -->
-        <div class="playlist-title">トップソング- 日本</div>
+        <div class="playlist-title" id="playlist-title">トップソング- 日本</div>
+
+        <!-- Login/Status -->
+        <div id="auth-container"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; text-align: center;">
+            <button id="login-btn"
+                style="padding: 15px 30px; font-size: 16px; background: #1db954; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: 600;">Conectar
+                con Spotify</button>
+        </div>
 
         <!-- Album Art -->
         <div class="album-container">
@@ -496,12 +505,148 @@
     </div>
 
     <script>
-        // Extract color from bottom of album cover and create gradient
+        // Initialize Spotify Player
+        const spotifyPlayer = new SpotifyPlayer();
+        let isPlaying = false;
+        let currentTrack = null;
+        let updateInterval = null;
+
+        // DOM Elements
         const coverImage = document.getElementById('cover-image');
         const colorBackground = document.querySelector('.color-background');
+        const songTitle = document.querySelector('.song-title');
+        const artistName = document.querySelector('.artist-name');
+        const progressFill = document.querySelector('.progress-fill');
+        const currentTimeEl = document.querySelector('.progress-time span:first-child');
+        const totalTimeEl = document.querySelector('.progress-time span:last-child');
+        const playBtn = document.querySelector('.control-btn.play');
+        const authContainer = document.getElementById('auth-container');
+        const loginBtn = document.getElementById('login-btn');
 
+        // Check for authorization code in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        // Initialize app
+        async function init() {
+            if (code) {
+                // Exchange code for token
+                try {
+                    await spotifyPlayer.getAccessToken(code);
+                    // Remove code from URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    startPlayer();
+                } catch (error) {
+                    console.error('Auth error:', error);
+                    showLogin();
+                }
+            } else {
+                // Check for existing token
+                const token = await spotifyPlayer.getValidToken();
+                if (token) {
+                    startPlayer();
+                } else {
+                    showLogin();
+                }
+            }
+        }
+
+        function showLogin() {
+            authContainer.style.display = 'block';
+        }
+
+        function hideLogin() {
+            authContainer.style.display = 'none';
+        }
+
+        // Login button handler
+        loginBtn.addEventListener('click', () => {
+            window.location.href = spotifyPlayer.getAuthUrl();
+        });
+
+        // Start player and update UI
+        async function startPlayer() {
+            hideLogin();
+            await updateNowPlaying();
+
+            // Update every 1 second
+            updateInterval = setInterval(updateNowPlaying, 1000);
+        }
+
+        // Update currently playing track
+        async function updateNowPlaying() {
+            try {
+                const playbackState = await spotifyPlayer.getPlaybackState();
+
+                if (!playbackState || !playbackState.item) {
+                    return;
+                }
+
+                const track = playbackState.item;
+                isPlaying = playbackState.is_playing;
+
+                // Update UI if track changed
+                if (!currentTrack || currentTrack.id !== track.id) {
+                    currentTrack = track;
+                    updateTrackInfo(track);
+                }
+
+                // Update progress
+                updateProgress(playbackState.progress_ms, track.duration_ms);
+
+                // Update play/pause button
+                updatePlayButton(isPlaying);
+            } catch (error) {
+                console.error('Error updating playback:', error);
+            }
+        }
+
+        // Update track information
+        function updateTrackInfo(track) {
+            songTitle.textContent = track.name;
+            artistName.textContent = track.artists.map(a => a.name).join(', ');
+
+            // Update album art
+            const albumArt = track.album.images[0]?.url || 'cover.png';
+            coverImage.src = albumArt;
+            coverImage.crossOrigin = 'anonymous';
+
+            // Update color background when image loads
+            coverImage.onload = setDynamicBackground;
+        }
+
+        // Update progress bar
+        function updateProgress(current, total) {
+            const percentage = (current / total) * 100;
+            progressFill.style.width = `${percentage}%`;
+
+            currentTimeEl.textContent = formatTime(current);
+            totalTimeEl.textContent = formatTime(total);
+        }
+
+        // Format milliseconds to MM:SS
+        function formatTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Update play/pause button icon
+        function updatePlayButton(playing) {
+            playBtn.innerHTML = playing ?
+                `<svg class="icon-xl" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                </svg>` :
+                `<svg class="icon-xl" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>`;
+        }
+
+        // Extract color from bottom of album cover and create gradient
         function setDynamicBackground() {
-            // Create canvas to extract color from specific area
+            if (!coverImage.complete || !coverImage.naturalWidth) return;
+
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
@@ -509,12 +654,10 @@
             canvas.height = coverImage.naturalHeight;
             ctx.drawImage(coverImage, 0, 0);
 
-            // Sample colors from the bottom 10% of the image
-            const bottomHeight = Math.floor(canvas.height * 0.9); // Start at 90% down
+            const bottomHeight = Math.floor(canvas.height * 0.9);
             const sampleY = bottomHeight;
             const sampleWidth = canvas.width;
 
-            // Get multiple samples from the bottom edge
             let r = 0, g = 0, b = 0;
             let sampleCount = 0;
 
@@ -526,14 +669,11 @@
                 sampleCount++;
             }
 
-            // Average the samples
             r = Math.floor(r / sampleCount);
             g = Math.floor(g / sampleCount);
             b = Math.floor(b / sampleCount);
 
-            // Create gradient from bottom of cover to bottom of screen
-            // Album ends at 75vh, gradient should start there
-            const gradient = `linear-gradient(to bottom, 
+            const gradient = `linear-gradient(to bottom,
                 transparent 0%,
                 transparent 70%,
                 rgba(${r}, ${g}, ${b}, 0.6) 75%,
@@ -544,13 +684,47 @@
             colorBackground.style.background = gradient;
         }
 
-        // Apply when image loads
-        if (coverImage.complete) {
-            setDynamicBackground();
-        } else {
-            coverImage.addEventListener('load', setDynamicBackground);
-        }
+        // Playback controls event listeners
+        playBtn.addEventListener('click', async () => {
+            try {
+                if (isPlaying) {
+                    await spotifyPlayer.pause();
+                } else {
+                    await spotifyPlayer.play();
+                }
+                await updateNowPlaying();
+            } catch (error) {
+                console.error('Playback error:', error);
+            }
+        });
+
+        document.querySelectorAll('.control-btn')[1].addEventListener('click', async () => {
+            await spotifyPlayer.skipPrevious();
+            setTimeout(updateNowPlaying, 300);
+        });
+
+        document.querySelectorAll('.control-btn')[3].addEventListener('click', async () => {
+            await spotifyPlayer.skipNext();
+            setTimeout(updateNowPlaying, 300);
+        });
+
+        // Progress bar click to seek
+        document.querySelector('.progress-bar').addEventListener('click', async (e) => {
+            if (!currentTrack) return;
+
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percentage = x / rect.width;
+            const positionMs = Math.floor(percentage * currentTrack.duration_ms);
+
+            await spotifyPlayer.seek(positionMs);
+            setTimeout(updateNowPlaying, 100);
+        });
+
+        // Initialize
+        init();
     </script>
 </body>
 
 </html>
+```
